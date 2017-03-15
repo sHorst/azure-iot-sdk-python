@@ -19,11 +19,11 @@ if "%1" equ "--use-cmake" (
 )
 if errorlevel 1 exit /b 1
 
-cd %build-root%\azure-iot-sdk-python\device\tests
+cd %build-root%\device\tests
 call python iothub_client_e2e.py
 if errorlevel 1 exit /b 1
 
-cd %build-root%\azure-iot-sdk-python\service\tests
+cd %build-root%\service\tests
 call python iothub_service_client_e2e.py
 if errorlevel 1 exit /b 1
 
