@@ -12,10 +12,10 @@ REM -- Python --
 cd %build-root%\build_all\windows
 if "%1" equ "--use-cmake" (
    echo Building client using cmake
-   call build_client.cmd %2 %3
+   call build_client.cmd --use-websockets %2 %3
 ) else (
   echo Building client using Nuget packages
-  call build.cmd --use-websockets --run-ut
+  call build.cmd --run-ut
 )
 if errorlevel 1 exit /b 1
 

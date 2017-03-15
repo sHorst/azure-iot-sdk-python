@@ -6,7 +6,7 @@ build_root=$(cd "$(dirname "$0")/.." && pwd)
 cd $build_root
 
 # -- Python C wrapper --
-./build_all/linux/build.sh $*
+./build_all/linux/build.sh --use-websockets $*
 [ $? -eq 0 ] || exit $?
 
 cd device/tests
