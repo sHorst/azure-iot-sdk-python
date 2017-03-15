@@ -1403,7 +1403,7 @@ public:
 #endif
         if (result != IOTHUB_CLIENT_OK)
         {
-            throw IoTHubClientError(__func__, result);
+            printf("SetOption failed with result: %d", result);
         }
     }
 

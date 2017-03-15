@@ -15,7 +15,16 @@ if "%1" equ "--use-cmake" (
    call build_client.cmd %2 %3
 ) else (
   echo Building client using Nuget packages
-  call build.cmd --run-ut
+  call build.cmd --use-websockets --run-ut
 )
 if errorlevel 1 exit /b 1
+
+cd %build-root%\azure-iot-sdk-python\device\tests
+call python iothub_client_e2e.py
+if errorlevel 1 exit /b 1
+
+cd %build-root%\azure-iot-sdk-python\service\tests
+call python iothub_service_client_e2e.py
+if errorlevel 1 exit /b 1
+
 cd %build-root%

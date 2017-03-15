@@ -11,7 +11,7 @@ import time
 import threading
 import types
 
-sys.path.append(os.path.realpath('..\samples'))
+sys.path.append(os.path.realpath('../samples'))
 
 from iothub_service_client import IoTHubRegistryManager, IoTHubRegistryManagerAuthMethod
 from iothub_service_client import IoTHubMessaging
@@ -86,16 +86,8 @@ def read_environment_vars():
         IOTHUB_E2E_X509_THUMBPRINT = os.environ["IOTHUB_E2E_X509_THUMBPRINT"]
         IOTHUB_EVENTHUB_CONNECTION_STRING = os.environ["IOTHUB_EVENTHUB_CONNECTION_STRING"]
         IOTHUB_PARTITION_COUNT = os.environ["IOTHUB_PARTITION_COUNT"]
-
-        print ("IOTHUB_CONNECTION_STRING: {0}".format(IOTHUB_CONNECTION_STRING))
-        print ("IOTHUB_DEVICE_LONGHAUL_DURATION_SECONDS: {0}".format(IOTHUB_DEVICE_LONGHAUL_DURATION_SECONDS))
-        print ("IOTHUB_E2E_X509_CERT: {0}".format(IOTHUB_E2E_X509_CERT))
-        print ("IOTHUB_E2E_X509_PRIVATE_KEY: {0}".format(IOTHUB_E2E_X509_PRIVATE_KEY))
-        print ("IOTHUB_E2E_X509_THUMBPRINT: {0}".format(IOTHUB_E2E_X509_THUMBPRINT))
-        print ("IOTHUB_EVENTHUB_CONNECTION_STRING: {0}".format(IOTHUB_EVENTHUB_CONNECTION_STRING))
-        print ("IOTHUB_PARTITION_COUNT: {0}".format(IOTHUB_PARTITION_COUNT))
     except:
-        print ("Could not get environment variables...")
+        print ("Could not get all the environment variables...")
 
 def generate_device_name():
     postfix = ''.join([random.choice(string.ascii_letters) for n in range(12)])
@@ -225,7 +217,13 @@ def sc_create_registrymanager(iothub_connection_string):
     return iothub_registry_manager
 
 def sc_create_device(iothub_registry_manager, device_id, auth_method):
-    primary_key = ""
+    global IOTHUB_E2E_X509_THUMBPRINT
+
+    if auth_method == IoTHubRegistryManagerAuthMethod.X509_THUMBPRINT:
+        primary_key = IOTHUB_E2E_X509_THUMBPRINT
+    else:
+        primary_key = ""
+
     secondary_key = ""
     new_device = iothub_registry_manager.create_device(device_id, primary_key, secondary_key, auth_method)
     assert new_device != None, "Device creation failed"
@@ -244,7 +242,7 @@ def sc_send_message(iothub_messaging, device_id, message):
     iothub_messaging.send_async(device_id, message, send_complete_callback, MESSAGING_CONTEXT)
 
 def sc_messaging_close(iothub_messaging):
-    iothub_messaging.close(None, None)
+    iothub_messaging.close()
 
 def sc_create_twin(iothub_connection_string):
     iothub_device_twin = IoTHubDeviceTwin(IOTHUB_CONNECTION_STRING)
@@ -284,6 +282,10 @@ def sc_delete_device(iothub_registry_manager, device_id):
 ###########################################################################
 
 def run_e2e_device_client(iothub_service_client_messaging, iothub_device_method, iothub_device_twin, device_id, device_connection_string, protocol, authMethod):
+    global IOTHUB_E2E_X509_CERT
+    global IOTHUB_E2E_X509_THUMBPRINT
+    global CERTIFICATES
+    global MESSAGING_CONTEXT
 
     ###########################################################################
     # IoTHubClient
@@ -306,14 +308,13 @@ def run_e2e_device_client(iothub_service_client_messaging, iothub_device_method,
 
     if authMethod == IoTHubRegistryManagerAuthMethod.X509_THUMBPRINT:
         device_client.set_option("x509certificate", IOTHUB_E2E_X509_CERT)
-        device_client.set_option("x509privatekey", IOTHUB_E2E_X509_THUMBPRINT)
+        device_client.set_option("x509privatekey", IOTHUB_E2E_X509_PRIVATE_KEY)
 
     if device_client.protocol == IoTHubTransportProvider.HTTP:
         device_client.set_option("timeout", HTTP_TIMEOUT)
         device_client.set_option("MinimumPollingTime", HTTP_MINIMUM_POLLING_TIME)
 
-    if protocol == IoTHubTransportProvider.MQTT_WS or protocol == IoTHubTransportProvider.AMQP_WS:
-        device_client.set_option("TrustedCerts", CERTIFICATES)
+    device_client.set_option("TrustedCerts", CERTIFICATES)
 
     # verify
     ###########################################################################
@@ -513,8 +514,7 @@ def run_e2e(iothub_registry_manager, iothub_service_client_messaging, iothub_dev
     print ("********************* run_e2e({0}, {1}) E2E test finished".format(protocol, authMethod))
     return retval
 
-
-if __name__ == '__main__':
+def main():
     print ("iothub_service_client E2E tests started!")
 
     read_environment_vars()
@@ -536,11 +536,21 @@ if __name__ == '__main__':
         assert run_e2e(iothub_registry_manager, iothub_service_client_messaging, iothub_device_method, iothub_device_twin, IoTHubTransportProvider.HTTP, IoTHubRegistryManagerAuthMethod.X509_THUMBPRINT) == 0
 
         assert run_e2e(iothub_registry_manager, iothub_service_client_messaging, iothub_device_method, iothub_device_twin, IoTHubTransportProvider.MQTT_WS, IoTHubRegistryManagerAuthMethod.SHARED_PRIVATE_KEY) == 0
-        assert run_e2e(iothub_registry_manager, iothub_service_client_messaging, iothub_device_method, iothub_device_twin, IoTHubTransportProvider.MQTT_WS, IoTHubRegistryManagerAuthMethod.X509_THUMBPRINT) == 0
-
         assert run_e2e(iothub_registry_manager, iothub_service_client_messaging, iothub_device_method, iothub_device_twin, IoTHubTransportProvider.AMQP_WS, IoTHubRegistryManagerAuthMethod.SHARED_PRIVATE_KEY) == 0
-        assert run_e2e(iothub_registry_manager, iothub_service_client_messaging, iothub_device_method, iothub_device_twin, IoTHubTransportProvider.AMQP_WS, IoTHubRegistryManagerAuthMethod.X509_THUMBPRINT) == 0
 
         print ("iothub_device_client E2E tests passed!")
+        tests_passed = True
     except:
         print ("iothub_device_client E2E tests failed!")
+        tests_passed = False
+    finally:
+        sc_messaging_close(iothub_service_client_messaging)
+
+    if tests_passed:
+        return 0
+    else:
+        return 1
+
+
+if __name__ == '__main__':
+    sys.exit(main())

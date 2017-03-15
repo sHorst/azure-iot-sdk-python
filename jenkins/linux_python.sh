@@ -9,3 +9,11 @@ cd $build_root
 ./build_all/linux/build.sh $*
 [ $? -eq 0 ] || exit $?
 
+cd device/tests
+python ./iothub_client_e2e.py
+[ $? -eq 0 ] || exit $?
+
+cd service/tests
+python ./iothub_service_client_e2e.py
+[ $? -eq 0 ] || exit $?
+
