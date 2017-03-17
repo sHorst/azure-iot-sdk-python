@@ -11,8 +11,6 @@ import time
 import threading
 import types
 
-sys.path.append(os.path.realpath('../samples'))
-
 from iothub_service_client import IoTHubRegistryManager, IoTHubRegistryManagerAuthMethod
 from iothub_service_client import IoTHubMessaging
 from iothub_service_client import IoTHubDeviceTwin
@@ -22,7 +20,7 @@ from iothub_service_client import IoTHubMessage, IoTHubDevice, IoTHubDeviceStatu
 from iothub_client import IoTHubClient, IoTHubClientError, IoTHubTransportProvider, IoTHubClientResult
 from iothub_client import IoTHubMessageDispositionResult, IoTHubError, DeviceMethodReturnValue
 
-from iothub_client_cert import CERTIFICATES
+from iothub_client_e2e_cert import CERTIFICATES
 
 IOTHUB_CONNECTION_STRING = ""
 IOTHUB_DEVICE_LONGHAUL_DURATION_SECONDS = ""
