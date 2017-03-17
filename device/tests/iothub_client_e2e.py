@@ -10,6 +10,7 @@ import random
 import time
 import threading
 import types
+import base64
 
 from iothub_service_client import IoTHubRegistryManager, IoTHubRegistryManagerAuthMethod
 from iothub_service_client import IoTHubMessaging
@@ -67,6 +68,11 @@ SLEEP_BEFORE_DEVICE_ACTION = 10
 # Helper functions
 ###########################################################################
 
+
+def spacing(str):
+    retVal = " ".join(s[i:i+1] for i in range(0, len(s), 1))
+    return retVal
+
 def read_environment_vars():
     global IOTHUB_CONNECTION_STRING
     global IOTHUB_DEVICE_LONGHAUL_DURATION_SECONDS
@@ -78,13 +84,13 @@ def read_environment_vars():
 
     try:
         IOTHUB_CONNECTION_STRING = os.environ["IOTHUB_CONNECTION_STRING"]
-        print ("IOTHUB_CONNECTION_STRING: {0}".format(IOTHUB_CONNECTION_STRING))
+        print ("IOTHUB_CONNECTION_STRING: {0}".format(base64.b64encode(IOTHUB_CONNECTION_STRING)))
 
         IOTHUB_E2E_X509_CERT = os.environ["IOTHUB_E2E_X509_CERT"]
-        print ("IOTHUB_E2E_X509_CERT: {0}".format(IOTHUB_E2E_X509_CERT))
+        print ("IOTHUB_E2E_X509_CERT: {0}".format(base64.b64encode(IOTHUB_E2E_X509_CERT)))
 
         IOTHUB_E2E_X509_PRIVATE_KEY = os.environ["IOTHUB_E2E_X509_PRIVATE_KEY"]
-        print ("IOTHUB_E2E_X509_PRIVATE_KEY: {0}".format(IOTHUB_E2E_X509_PRIVATE_KEY))
+        print ("IOTHUB_E2E_X509_PRIVATE_KEY: {0}".format(base64.b64encode(IOTHUB_E2E_X509_PRIVATE_KEY)))
 
         IOTHUB_E2E_X509_THUMBPRINT = os.environ["IOTHUB_E2E_X509_THUMBPRINT"]
         print ("IOTHUB_E2E_X509_THUMBPRINT: {0}".format(IOTHUB_E2E_X509_THUMBPRINT))
