@@ -523,7 +523,7 @@ def run_e2e(iothub_registry_manager, iothub_service_client_messaging, iothub_dev
     return retval
 
 def main():
-    print ("iothub_service_client E2E tests started!")
+    print ("********************* iothub_service_client E2E tests started!")
 
     read_environment_vars()
     iothub_registry_manager = sc_create_registrymanager(IOTHUB_CONNECTION_STRING)
@@ -546,10 +546,10 @@ def main():
         assert run_e2e(iothub_registry_manager, iothub_service_client_messaging, iothub_device_method, iothub_device_twin, IoTHubTransportProvider.MQTT_WS, IoTHubRegistryManagerAuthMethod.SHARED_PRIVATE_KEY) == 0
         assert run_e2e(iothub_registry_manager, iothub_service_client_messaging, iothub_device_method, iothub_device_twin, IoTHubTransportProvider.AMQP_WS, IoTHubRegistryManagerAuthMethod.SHARED_PRIVATE_KEY) == 0
 
-        print ("iothub_device_client E2E tests passed!")
+        print ("********************* iothub_device_client E2E tests passed!")
         tests_passed = True
     except:
-        print ("iothub_device_client E2E tests failed!")
+        print ("********************* iothub_device_client E2E tests failed!")
         tests_passed = False
     finally:
         sc_messaging_close(iothub_service_client_messaging)

@@ -558,7 +558,7 @@ def run_e2e_messaging(iothub_connection_string):
 
 
 def main():
-    print ("iothub_service_client E2E tests started!")
+    print ("********************* iothub_service_client E2E tests started!")
 
     read_environment_vars()
    
@@ -567,10 +567,10 @@ def main():
         assert run_e2e_devicetwin(IOTHUB_CONNECTION_STRING) == 0
         assert run_e2e_devicemethod(IOTHUB_CONNECTION_STRING) == 0
         assert run_e2e_messaging(IOTHUB_CONNECTION_STRING) == 0
-        print ("iothub_service_client E2E tests passed!")
+        print ("********************* iothub_service_client E2E tests passed!")
         return 0
     except:
-        print ("iothub_service_client E2E tests failed!")
+        print ("********************* iothub_service_client E2E tests failed!")
         return 1
 
 

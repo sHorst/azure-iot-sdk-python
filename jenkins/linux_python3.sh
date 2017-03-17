@@ -10,10 +10,10 @@ cd $build_root
 [ $? -eq 0 ] || exit $?
 
 cd device/tests
-python ./iothub_client_e2e.py
+python3 ./iothub_client_e2e.py
 [ $? -eq 0 ] || exit $?
 
 cd service/tests
-python ./iothub_service_client_e2e.py
+python3 ./iothub_service_client_e2e.py
 [ $? -eq 0 ] || exit $?
 
