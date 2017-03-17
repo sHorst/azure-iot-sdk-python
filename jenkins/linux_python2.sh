@@ -9,11 +9,11 @@ cd $build_root
 ./build_all/linux/build.sh --use-websockets $*
 [ $? -eq 0 ] || exit $?
 
-cd device/tests
-python2 ./iothub_client_e2e.py
-[ $? -eq 0 ] || exit $?
-
 cd service/tests
 python2 ./iothub_service_client_e2e.py
+[ $? -eq 0 ] || exit $?
+
+cd device/tests
+python2 ./iothub_client_e2e.py
 [ $? -eq 0 ] || exit $?
 
