@@ -1038,6 +1038,7 @@ BlobUploadConfirmationCallback(
 
 class IoTHubClient
 {
+    bool IsPlatformInitialized = false;
 
     static IOTHUB_CLIENT_TRANSPORT_PROVIDER
         GetProtocol(IOTHUB_TRANSPORT_PROVIDER _protocol)
@@ -1114,6 +1115,12 @@ public:
         {
             ScopedGILRelease release;
             iotHubClientHandle = IoTHubClient_CreateFromConnectionString(connectionString.c_str(), GetProtocol(_protocol));
+
+            if (!IsPlatformInitialized)
+            {
+                platform_init();
+                IsPlatformInitialized = true;
+            }
         }
         if (iotHubClientHandle == NULL)
         {
@@ -1136,6 +1143,12 @@ public:
         {
             ScopedGILRelease release;
             iotHubClientHandle = IoTHubClient_Create(&config);
+
+            if (!IsPlatformInitialized)
+            {
+                platform_init();
+                IsPlatformInitialized = true;
+            }
         }
         if (iotHubClientHandle == NULL)
         {
@@ -1146,6 +1159,12 @@ public:
     ~IoTHubClient()
     {
         Destroy();
+
+        if (IsPlatformInitialized)
+        {
+            platform_deinit();
+            IsPlatformInitialized = false;
+        }
     }
 
     static IoTHubClient const *CreateFromConnectionString(
@@ -1463,7 +1482,6 @@ BOOST_PYTHON_MODULE(IMPORT_NAME)
 {
     // init threads for callbacks
     PyEval_InitThreads();
-    platform_init();
 
     // by default enable user, py docstring options, disable c++ signatures
     bool show_user_defined = true;

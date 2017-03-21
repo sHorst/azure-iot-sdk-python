@@ -1193,6 +1193,7 @@ class IoTHubMessaging
     OpenCompleteContext *openCompleteContext = NULL;
     SendCompleteContext *sendCompleteContext = NULL;
     FeedbackMessageReceivedContext *feedbackMessageContext = NULL;
+    bool IsPlatformInitialized = false;
 
     void CreateContexts()
     {
@@ -1296,6 +1297,13 @@ public:
         }
 
         ScopedGILRelease release;
+
+        if (!IsPlatformInitialized)
+        {
+            platform_init();
+            IsPlatformInitialized = true;
+        }
+
         result = IoTHubMessaging_Open(_iothubMessagingHandle, OpenCompleteCallback, openCompleteContext);
 
         if (result != IOTHUB_MESSAGING_OK)
@@ -1308,6 +1316,14 @@ public:
         )
     {
         ScopedGILRelease release;
+
+
+        if (IsPlatformInitialized)
+        {
+            platform_deinit();
+            IsPlatformInitialized = false;
+        }
+
         IoTHubMessaging_Close(_iothubMessagingHandle);
     }
 
@@ -1670,7 +1686,6 @@ BOOST_PYTHON_MODULE(IMPORT_NAME)
 {
     // init threads for callbacks
     PyEval_InitThreads();
-    platform_init();
 
     // by default enable user, py docstring options, disable c++ signatures
     bool show_user_defined = true;
