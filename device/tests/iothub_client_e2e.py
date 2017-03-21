@@ -86,20 +86,22 @@ def read_environment_vars():
         IOTHUB_CONNECTION_STRING = os.environ["IOTHUB_CONNECTION_STRING"]
         print ("IOTHUB_CONNECTION_STRING: {0}".format(base64.b64encode(IOTHUB_CONNECTION_STRING)))
 
-        IOTHUB_E2E_X509_CERT = os.environ["IOTHUB_E2E_X509_CERT"]
-        print ("IOTHUB_E2E_X509_CERT: {0}".format(base64.b64encode(IOTHUB_E2E_X509_CERT)))
-
-        IOTHUB_E2E_X509_PRIVATE_KEY = os.environ["IOTHUB_E2E_X509_PRIVATE_KEY"]
-        print ("IOTHUB_E2E_X509_PRIVATE_KEY: {0}".format(base64.b64encode(IOTHUB_E2E_X509_PRIVATE_KEY)))
-
-        IOTHUB_E2E_X509_THUMBPRINT = os.environ["IOTHUB_E2E_X509_THUMBPRINT"]
-        print ("IOTHUB_E2E_X509_THUMBPRINT: {0}".format(IOTHUB_E2E_X509_THUMBPRINT))
-
         IOTHUB_EVENTHUB_CONNECTION_STRING = os.environ["IOTHUB_EVENTHUB_CONNECTION_STRING"]
         print ("IOTHUB_EVENTHUB_CONNECTION_STRING: {0}".format(IOTHUB_EVENTHUB_CONNECTION_STRING))
 
         IOTHUB_PARTITION_COUNT = os.environ["IOTHUB_PARTITION_COUNT"]
         print ("IOTHUB_PARTITION_COUNT: {0}".format(IOTHUB_PARTITION_COUNT))
+
+        IOTHUB_E2E_X509_THUMBPRINT = os.environ["IOTHUB_E2E_X509_THUMBPRINT"]
+        print ("IOTHUB_E2E_X509_THUMBPRINT: {0}".format(IOTHUB_E2E_X509_THUMBPRINT))
+        
+        x509_base64 = os.environ["IOTHUB_E2E_X509_CERT_BASE64"]
+        IOTHUB_E2E_X509_CERT = base64.b64decode(x509_base64)
+        print ("IOTHUB_E2E_X509_CERT_BASE64: {0}".format(x509_base64))
+
+        x509_privatkey_base64 = os.environ["IOTHUB_E2E_X509_PRIVATE_KEY_BASE64"]
+        IOTHUB_E2E_X509_PRIVATE_KEY = base64.b64decode(x509_privatkey_base64)
+        print ("IOTHUB_E2E_X509_PRIVATE_KEY_BASE64: {0}".format(x509_privatkey_base64))
     except:
         print ("Could not get all the environment variables...")
 
